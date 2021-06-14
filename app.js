@@ -38,7 +38,7 @@ function createMapFileIfNeeded() {
 /////
 // Server
 app.get('/', (req, res) => {
-  res.send('Hello from the map share plugin!');
+  res.send('Hello from the map share app!');
 })
 
 app.get('/chunks', (req, res) => {
@@ -67,5 +67,5 @@ app.post('/chunks', bodyParser.json(), (req, res) => {
 })
 
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`)
+  console.log(`Map share app listening at http://localhost:${port}`)
 })
