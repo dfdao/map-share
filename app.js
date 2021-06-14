@@ -26,6 +26,14 @@ function convertChunksArrayToChunkMap(chunksArray) {
   return chunksMap;
 }
 
+/////
+// Utils
+function createMapFileIfNeeded() {
+  // if the map file doesn't exist, create it
+  if (!fs.existsSync(mapFile)) {
+    fs.writeFileSync(mapFile, '{}');
+  }
+}
 
 /////
 // Server
@@ -34,19 +42,19 @@ app.get('/', (req, res) => {
 })
 
 app.get('/chunks', (req, res) => {
+  createMapFileIfNeeded();
+
   let mapData = JSON.parse(fs.readFileSync(mapFile));
   res.send(Object.values(mapData));
 })
 
 app.post('/chunks', bodyParser.json(), (req, res) => {
-  // if the map file doesn't exist, create it
-  if (!fs.existsSync(mapFile)) {
-    fs.writeFileSync(mapFile, '{}');
-  }
+  createMapFileIfNeeded();
 
   // Convert chunks into internal map format
   let chunksArray = req.body["chunks"];
   let chunksMap = convertChunksArrayToChunkMap(chunksArray)
+
   let mapData = JSON.parse(fs.readFileSync(mapFile));
 
   // Add all chunks to current map
