@@ -5,6 +5,7 @@ const fs = require('fs');
 const cors = require('cors');
 
 const app = express()
+app.use(express.json({limit: '500mb'}));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json())
 app.use(cors());
