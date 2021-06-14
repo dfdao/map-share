@@ -1,0 +1,10 @@
+{
+  "name": "map-share",
+  "version": "1.0.0",
+  "dependencies": {
+    "express": "^4.17.1",
+    "body-parser": "1.19.0",
+    "md5": "2.3.0",
+    "cors": "2.8.5"
+  }
+}
