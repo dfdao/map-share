@@ -11,7 +11,7 @@ app.use(bodyParser.json())
 app.use(cors());
 
 const port = 8500
-const mapFile = 'map.json'
+const mapFilenameSuffix = 'map.json'
 
 //////
 // App logic
@@ -29,10 +29,14 @@ function convertChunksArrayToChunkMap(chunksArray) {
 
 /////
 // Utils
-function createMapFileIfNeeded() {
+function mapFilename(contractAddress) {
+  return contractAddress + "_" + mapFilenameSuffix;
+}
+
+function createMapFileIfNeeded(filename) {
   // if the map file doesn't exist, create it
-  if (!fs.existsSync(mapFile)) {
-    fs.writeFileSync(mapFile, '{}');
+  if (!fs.existsSync(filename)) {
+    fs.writeFileSync(filename, '{}');
   }
 }
 
@@ -42,28 +46,30 @@ app.get('/', (req, res) => {
   res.send('Hello from the map share app!');
 })
 
-app.get('/chunks', (req, res) => {
-  createMapFileIfNeeded();
+app.get('/:contractAddress/chunks', (req, res) => {
+  let filename = mapFilename(req.params.contractAddress);
+  createMapFileIfNeeded(filename);
 
-  let mapData = JSON.parse(fs.readFileSync(mapFile));
+  let mapData = JSON.parse(fs.readFileSync(filename));
   res.send(Object.values(mapData));
 })
 
-app.post('/chunks', bodyParser.json(), (req, res) => {
-  createMapFileIfNeeded();
+app.post('/:contractAddress/chunks/', bodyParser.json(), (req, res) => {
+  let filename = mapFilename(req.params.contractAddress);
+  createMapFileIfNeeded(filename);
 
   // Convert chunks into internal map format
   let chunksArray = req.body["chunks"];
   let chunksMap = convertChunksArrayToChunkMap(chunksArray)
 
-  let mapData = JSON.parse(fs.readFileSync(mapFile));
+  let mapData = JSON.parse(fs.readFileSync(filename));
 
   // Add all chunks to current map
   for (let chunkKey in chunksMap) {
     mapData[chunkKey] = chunksMap[chunkKey];
   }
 
-  fs.writeFileSync(mapFile, JSON.stringify(mapData));
+  fs.writeFileSync(filename, JSON.stringify(mapData));
   res.send({success: true});
 })
 
