@@ -203,7 +203,11 @@ class RemotePlugin extends Plugin {
     constructor() {
         super();
 
-        this.url = 'http://localhost:8500/chunks';
+        this.baseUrl = 'http://localhost:8500';
+    }
+
+    requestPath = () => {
+        return this.baseUrl + "/" + df.getContractAddress() + '/chunks';
     }
 
     onUpload = async () => {
@@ -225,7 +229,7 @@ class RemotePlugin extends Plugin {
         try {
             let map = JSON.stringify(chunksAsArray);
 
-            const resp = await fetch(this.url, {
+            const resp = await fetch(this.requestPath(), {
                 method: 'POST',
                 body: JSON.stringify({'chunks': chunksAsArray }),
                 headers: { 'Content-Type': 'application/json' }
@@ -240,7 +244,7 @@ class RemotePlugin extends Plugin {
     }
 
     onDownload = async () => {
-        const resp = await fetch(this.url, {
+        const resp = await fetch(this.requestPath(), {
             method: 'GET',
             headers: {'Content-Type': 'application/json' }
         });
